@@ -28,30 +28,43 @@ namespace EditingTimer
     [ClassInterface(ClassInterfaceType.None)]
     public class ExposedFunctions: IExposedFunctions
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public void Test(Excel.Workbook Wb)
         {
+            log.Info("Test - Start");
             System.Windows.Forms.MessageBox.Show(Wb.FullName);
+            log.Info("Test - Finish");
+
         }
 
         public void WorkbookUpdateTimer(Excel.Workbook Wb)
         {
+            log.Info("WorkbookUpdateTimer - Start");
             Globals.ThisAddIn.WorkbookChangeHandler(Wb);
+            log.Info("WorkbookUpdateTimer - Finish");
         }
 
         public void WorkbookSaveTimer(Excel.Workbook Wb)
         {
-            Globals.ThisAddIn.WorkbookSaveHandler(Wb);
+            log.Info("WorkbookSaveTimer - Start");
+            Globals.ThisAddIn.WorkbookBeforeSaveHandler(Wb);
+            log.Info("WorkbookSaveTimer - Finish");
         }
 
         public void WorkbookCloseTimer(Excel.Workbook Wb)
         {
+            log.Info("WorkbookCloseTimer - Start");
             Globals.ThisAddIn.BeforeCloseHandler(Wb);
+            log.Info("WorkbookCloseTimer - Finish");
         }
 
         public string WorkbookElapsedTime(Excel.Workbook Wb, string FormatString = "")
         {
             // Refactored so ThisAddIn.GetElapsedTime always returns the same formatted string.
             // Maintained FormatString parameter as an optional argument for backwards compatablity
+            log.Info("WorkbookElapsedTime - Start");
+            log.Info("WorkbookElapsedTime - Returning");
             return Globals.ThisAddIn.GetElapsedTime(Wb);
         }
     }
