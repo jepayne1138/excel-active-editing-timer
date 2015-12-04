@@ -113,7 +113,9 @@ namespace EditingTimer
             this.Application.WorkbookOpen += new Excel.AppEvents_WorkbookOpenEventHandler(Application_WorkbookOpenOrNew);
             this.Application.WorkbookBeforeSave += new Excel.AppEvents_WorkbookBeforeSaveEventHandler(Application_WorkbookBeforeSave);
             this.Application.WorkbookAfterSave += new Excel.AppEvents_WorkbookAfterSaveEventHandler(Application_WorkbookAfterSave);
-            this.Application.WorkbookBeforeClose += new Excel.AppEvents_WorkbookBeforeCloseEventHandler(Application_WorkbookBeforeClose);
+            // this.Application.WorkbookBeforeClose += new Excel.AppEvents_WorkbookBeforeCloseEventHandler(Application_WorkbookBeforeClose);
+            this.Application.WorkbookDeactivate += new Excel.AppEvents_WorkbookDeactivateEventHandler(Application_WorkbookDeactivate);
+
             this.Application.SheetChange += new Excel.AppEvents_SheetChangeEventHandler(Application_SheetChange);
 
             // Need to iterate though all open workbooks on startup, find any not yet saved, and run handler on those
@@ -291,6 +293,54 @@ namespace EditingTimer
             Wb.CustomDocumentProperties(PREVFULLNAME).Delete();
 
             log.Info("WorkbookAfterSaveHandler - Finish");
+        }
+
+        private void Application_WorkbookDeactivate(Excel.Workbook Wb)
+        {
+            log.Info(String.Format("Application_WorkbookDeactivate: <{0}>", Wb.Name));
+            DeactivateHandler(Wb);
+            log.Info("Application_WorkbookDeactivate - Finish");
+        }
+
+        /// <summary>
+        /// Checks all outstanding timers against all open
+        /// workbook names.  If no open workbook exists for
+        /// a timer, that timer should be cleaned up.
+        /// 
+        /// Intended to be called whenever a workbook is
+        /// deactivated
+        /// </summary>
+        /// <param name="Wb"></param>
+        public void DeactivateHandler(Excel.Workbook Wb)
+        {
+            log.Info("DeactivateHandler - Start");
+
+            foreach (string timerFileFullName in timers.Keys)
+            {
+                if (!FullName_FileIsOpen(timerFileFullName))
+                {
+                    // Clean up the WorkbookTimers instance
+                    timers[timerFileFullName].Close();
+                    timers.Remove(timerFileFullName);
+                }
+            }
+            log.Info("DeactivateHandler - Finish");
+        }
+
+        /// <summary>
+        /// Returns true if a workbook with the given FullName
+        /// is currently open for this Application.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private bool FullName_FileIsOpen(string fileFullName)
+        {
+            foreach (Excel.Workbook openFile in Application.Workbooks)
+            {
+                if (openFile.FullName.Equals(fileFullName)) { return true; }
+            }
+
+            return false;
         }
 
         private void Application_WorkbookBeforeClose(Excel.Workbook Wb, ref bool Cancel)

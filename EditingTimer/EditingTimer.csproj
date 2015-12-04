@@ -34,7 +34,7 @@
     <PublishUrl>C:\JimShare\EditingTimer\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.4.0.2</ApplicationVersion>
+    <ApplicationVersion>1.5.0.0</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>

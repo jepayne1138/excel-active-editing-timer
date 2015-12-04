@@ -55,7 +55,7 @@ namespace EditingTimer
         public void WorkbookCloseTimer(Excel.Workbook Wb)
         {
             log.Info("WorkbookCloseTimer - Start");
-            Globals.ThisAddIn.BeforeCloseHandler(Wb);
+            Globals.ThisAddIn.DeactivateHandler(Wb);
             log.Info("WorkbookCloseTimer - Finish");
         }
 
